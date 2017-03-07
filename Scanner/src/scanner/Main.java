@@ -1,21 +1,52 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scanner;
 
-/**
- *
- * @author cais
- */
-public class Main {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
+public class Main {
     
+    
+
+    private static String arquivo = null;
+    
+    public static void main(String[] args){
+        if(args.length == 1){
+            arquivo = args[0];
+            Print.show("Arquivo: \"" + arquivo + "\"");
+            
+            lerArquivo(arquivo);
+            
+        } else if(args.length > 1){
+            Erro.show(1);
+        } else{
+            Erro.show(0);
+        }
+        
+    }
+
+    private static void lerArquivo(String arquivo){
+        Path path;
+        Scanner scanner;
+        path = Paths.get(arquivo);
+    
+        try {
+            scanner = new Scanner(path.toFile());
+            
+            Print.show("## Inicio de Arquivo >>>");
+            while(scanner.hasNextLine()){
+                Print.show(scanner.nextLine());
+            }
+            Print.show("<<< Fim de Arquivo");
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }
 }

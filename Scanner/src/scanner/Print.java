@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scanner;
 
-/**
- *
- * @author cais
- */
 public class Print {
-    public static void show(String texto){
-        System.out.println(texto);       
+    public static void show(String texto, boolean quebraLinha){
+        if(quebraLinha) System.out.println(texto);
+        else  System.out.print(texto);
+    }
+    
+    public static void show(char caractere, boolean quebraLinha){
+        if(quebraLinha) System.out.println(caractere);
+        else  System.out.print(caractere);
     }
 }

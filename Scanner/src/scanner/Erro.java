@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scanner;
 
-/**
- *
- * @author cais
- */
 public class Erro {
     private static final String[] mensagens = 
     {
@@ -17,7 +8,7 @@ public class Erro {
     };
     
     public static void show(int codigo){
-        Print.show(mensagens[codigo]);
+        Print.show(mensagens[codigo], true);
     }
     
 }

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TabelaDeSimbolos {
-    private final List<String> tabela = Arrays.asList(
+    private static final List<String> tabela = Arrays.asList(
         "main",
         "if",
         "else",
@@ -33,10 +33,14 @@ public class TabelaDeSimbolos {
         ";"
     );
     
-    public int getCodigo(String token){
-        if(tabela.contains(token)){
-            return tabela.indexOf(token) + 1;
+    public static int lookUp(String lexema){
+        if(tabela.contains(lexema)){
+            return tabela.indexOf(lexema);
         }
         else return 0;
+    }
+    
+    public static String getNome(int codigo){
+        return tabela.get(codigo);
     }
 }

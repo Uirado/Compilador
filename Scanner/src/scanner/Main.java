@@ -17,7 +17,7 @@ public class Main {
         if(args.length == 1){
             arquivo = args[0];
             
-            if(debug) Print.show("Arquivo: \"" + arquivo + "\"", true);
+            if(debug) Print.show("Arquivo: \"" + arquivo + "\"");
             lerArquivo(arquivo);
             
         } else if(args.length > 1){

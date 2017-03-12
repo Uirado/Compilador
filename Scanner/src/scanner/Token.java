@@ -30,10 +30,17 @@ class Token {
     }
 
     void print() {
-        if(lexema != null){
-            Print.show(codigo + "   [ " + TabelaDeSimbolos.getNome(codigo) + " ]    \"" + lexema + "\"");
+        String strCodigo;
+        if(codigo < 10){
+            strCodigo = "0" + codigo;
         } else{
-            Print.show(codigo + "   [ " + TabelaDeSimbolos.getNome(codigo) +" ]");
+            strCodigo = Integer.toString(codigo);
+        }
+        
+        if(lexema == null || codigo < 50){
+            Print.show(strCodigo + "   " + TabelaDeSimbolos.getNome(codigo) +"");
+        } else{
+            Print.show(strCodigo + "   [" + TabelaDeSimbolos.getNome(codigo) + "] \"" + lexema + "\"");
         }
     }
 }

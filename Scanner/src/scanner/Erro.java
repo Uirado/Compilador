@@ -15,11 +15,18 @@ public class Erro {
         String lex;
         
         if(tok == null){
-            lex = "";
+            Print.show("ERRO na linha " + linha + ", coluna " + coluna + ", ultimo token lido (nenhum): "+ detalhes);
+            
         } else{
             lex = TabelaDeSimbolos.getNome(tok.getCodigo());
+            
+            if(tok.getCodigo() >= 50){ 
+                Print.show("ERRO na linha " + linha + ", coluna " + coluna + ", ultimo token lido ["+ lex +"] \""+tok.getLexema()+"\": "+ detalhes);
+            } else{
+                Print.show("ERRO na linha " + linha + ", coluna " + coluna + ", ultimo token lido ["+ lex +"]: "+ detalhes);
+            }
         }
         
-        Print.show("ERRO na linha " + linha + ", coluna " + coluna + ", ultimo token lido \""+ lex +"\": "+ detalhes);
+        
     }
 }

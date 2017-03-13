@@ -51,6 +51,7 @@ public class Tokenizer {
     
     private Token scan(){
         lexema = "";
+        token = null;
         int codErro = 0;
            
         //Automato
@@ -178,7 +179,21 @@ public class Tokenizer {
                         }
                     }
                     
-                } else{
+                } else if(ch.charAt(0) == '\''){ //pode ser um CHAR
+                    lerProximoChar();
+                    if(ER.ehDigito(ch) || ER.ehLetra(ch)){
+                        lerProximoChar();
+                        if(ch.charAt(0) == '\''){
+                            lerProximoChar();
+                            defineTokenFound(false, lexema);
+                        } else{
+                            codErro = 5;
+                        }
+                    }else{
+                        codErro = 5;
+                    }
+                    
+                }else{
                     //erro de caractere invalido
                     codErro = 1;
                     break;
@@ -190,7 +205,6 @@ public class Tokenizer {
                 case 1:
                     Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Caractere inválido: \"" + ch + "\"");
                     getNextChar();
-                    token = null;
                     break;
                 case 2:
                     Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação do operador relacional DIFERENTE. Caractere \"!\" sozinho");
@@ -200,6 +214,9 @@ public class Tokenizer {
                     break;
                 case 4:
                     Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação de FLOAT \""+lexema+"\"");
+                    break;
+                case 5:
+                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação de CHAR \""+lexema+"\"");
                     break;
             }
         }
@@ -243,6 +260,7 @@ public class Tokenizer {
             
             while(ch.charAt(0) != '\n'){
                 ch = leitor.next();
+                colunaAtual++;
             }
         } else{ /* Comentario multilinha */
             
@@ -257,10 +275,14 @@ public class Tokenizer {
                                 break;
                             }
                         }
+                    } else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
+                        linhaAtual++;
+                        colunaAtual = 0;
                     }
                 }
                 if(ch == null){
                     //fim de arquivo sem fechar o comentario '*/'
+                    colunaAtual--;
                     erro = 3;
                     break;
                 }

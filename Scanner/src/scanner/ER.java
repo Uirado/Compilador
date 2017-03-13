@@ -3,11 +3,12 @@ package scanner;
 
 public class ER {
     
-    static String L = "[a-zA-Z]";
+    static String L = "[a-z]";
     static String D = "[0-9]";
-    static String ID = "(_|[a-zA-Z])(_|[a-zA-Z]|[0-9])*";
-    static String INTEIRO = "[0-9]+";
-    static String FLOAT = "[0-9]*.[0-9]+";
+    static String ID = "(_|"+L+")(_|"+L+"|"+D+")*";
+    static String INTEIRO = D+"+";
+    static String FLOAT = D+"*."+D+"+";
+    static String CHAR = "('"+L+"'|'"+D+"')";
     
     static boolean ehLetra(String ch) {
         if(ch.matches(L)){
@@ -28,6 +29,14 @@ public class ER {
             return false;
         }
         
+    }
+    
+    static boolean ehChar(String lexema){
+        if(lexema.matches(CHAR)){
+            return true;
+        }else{
+            return false;                
+        }
     }
 
     static boolean ehIdentificador(String lexema) {

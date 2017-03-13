@@ -38,9 +38,9 @@ class Token {
         }
         
         if(lexema == null || codigo < 50){
-            Print.show(strCodigo + "   " + TabelaDeSimbolos.getNome(codigo) +"");
+            Print.show("(" + strCodigo + ")   " + TabelaDeSimbolos.getNome(codigo) +"");
         } else{
-            Print.show(strCodigo + "   [" + TabelaDeSimbolos.getNome(codigo) + "] \"" + lexema + "\"");
+            Print.show("(" + strCodigo + ")   [" + TabelaDeSimbolos.getNome(codigo) + "] \"" + lexema + "\"");
         }
     }
 }

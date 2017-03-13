@@ -1,7 +1,16 @@
 int main(){
-
-    int x = 10;
-    int y = 20;
-    float media = (x + y)/2.0;
-    return media;//comentario
+    int x = 10, x1 = 30;
+    float y = 20.1, y1 = 40.0;
+    char ch_1 = '0';
+    while (x < y){
+        if(x == y){
+            do{
+                for(int i = 0; i < x; i = i+1){
+                    y1 = x1 + (30 * 10)/5;
+                }
+            }while(x > y);
+        } else{
+            ch_1 = 'c';
+        }
+    }
 }

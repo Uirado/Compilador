@@ -42,6 +42,8 @@ public class TabelaDeSimbolos {
             return 51;
         } else if(ER.ehFloat(lexema)){
             return 52;
+        } else if(ER.ehChar(lexema)){
+            return 53;
         }
         else return -1;
     }
@@ -49,9 +51,10 @@ public class TabelaDeSimbolos {
     public static String getNome(int codigo){
         if(codigo >= 50){
             switch (codigo){
-                case 50: return "IDE";
-                case 51: return "INT";
-                case 52: return "FLT";
+                case 50: return "IDENT";
+                case 51: return "INTEIRO";
+                case 52: return "FLOAT";
+                case 53: return "CHAR";
             }
         }
         return tabela.get(codigo);

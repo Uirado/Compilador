@@ -3,7 +3,7 @@ Criação de um compilador experimental para a disciplina Compiladores do curso 
 
 Linguagem: Java.
 
-# Fases do compilador que serão desenvolvidas:
+## Fases do compilador que serão desenvolvidas:
 1 - Analisador Léxico (Scanner);
 
 2 - Analisador Sintático;
@@ -15,7 +15,7 @@ Linguagem: Java.
 
 
 
-## Diretrizes do Projeto:
+# Diretrizes do Projeto:
 
 Disciplina: Construção de Compiladores
 
@@ -36,7 +36,7 @@ __Observação 3: A mensagem deve ser clara e específica de erro, sempre que fo
 
 
 
-######Símbolos
+###Símbolos
 
 letra ::= [a-z]
 
@@ -60,7 +60,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
 
 
-######Aspectos Gerais da Linguagem
+###Aspectos Gerais da Linguagem
 
 -Linguagem de formato livre.
 -Linguagem é case sensitive, ou seja “WHILE” != “while”
@@ -72,7 +72,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
 
 
-######Atribuições do Scanner
+###Atribuições do Scanner
 
 -Retornar dois resultados: classificação e lexema
 
@@ -84,7 +84,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
         Considere o TAB como equivalente a 4 colunas
 
-######Procedimento:
+#Procedimento:
 
 Adotar uma representação interna para cada tipo de token
 

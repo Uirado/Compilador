@@ -28,15 +28,15 @@ Professor Adjunto
 
 Escrever, em C/C++ ou Java, a função SCAN para a linguagem abaixo:
 
-__Observação 1: o arquivo a ser compilado será passado ao seu compilador via argumento da linha de comando__
+**Observação 1: o arquivo a ser compilado será passado ao seu compilador via argumento da linha de comando**
 
-__Observação 2: Imprimir apenas mensagens de erro.__
+**Observação 2: Imprimir apenas mensagens de erro.**
 
-__Observação 3: A mensagem deve ser clara e específica de erro, sempre que for o caso, e em qualquer fase do compilador. Formato: "ERRO na linha n, coluna m, ultimo token lido t: mensagem específica do erro"__
+**Observação 3: A mensagem deve ser clara e específica de erro, sempre que for o caso, e em qualquer fase do compilador. Formato: "ERRO na linha n, coluna m, ultimo token lido t: mensagem específica do erro"**
 
 
 
-###Símbolos
+### Símbolos
 
 letra ::= [a-z]
 
@@ -60,7 +60,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
 
 
-###Aspectos Gerais da Linguagem
+### Aspectos Gerais da Linguagem
 
 -Linguagem de formato livre.
 -Linguagem é case sensitive, ou seja “WHILE” != “while”
@@ -72,7 +72,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
 
 
-###Atribuições do Scanner
+### Atribuições do Scanner
 
 -Retornar dois resultados: classificação e lexema
 
@@ -84,7 +84,7 @@ char ::= 'letra'  |  'dígito'         // Uma constante do tipo char (entre aspa
 
         Considere o TAB como equivalente a 4 colunas
 
-#Procedimento:
+### Procedimento:
 
 Adotar uma representação interna para cada tipo de token
 

@@ -76,9 +76,8 @@ Escrever, em C/C++ ou Java, a função SCAN para a linguagem abaixo:
 
 - Retornar dois resultados: classificação e lexema
 
-        No caso de o token ser um identificador ou uma constante devem ser retornados classificação e lexema
-        
-        Se for uma palavra reservada, operador, caracter especial ou delimitador: classificação apenas
+        - No caso de o token ser um identificador ou uma constante devem ser retornados classificação e lexema
+        - Se for uma palavra reservada, operador, caracter especial ou delimitador: classificação apenas
 
 - Emitir mensagem clara e específica de erro, sempre que for o caso, e em qualquer fase do compilador. Formato: "ERRO na linha n, coluna m, ultimo token lido t: mensagem"
 

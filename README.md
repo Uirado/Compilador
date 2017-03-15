@@ -13,10 +13,14 @@ Linguagem: Java.
 4 - Gerador de Código Intermediário;
 
 
-# Especificaçes do Projeto:
+
+
+## Diretrizes do Projeto:
 
 Disciplina: Construção de Compiladores
+
 Projeto: Desenvolvimento de um Compilador
+
 Parte I: Analisador Léxico (SCANNER)
 
 Sílvio Bandeira

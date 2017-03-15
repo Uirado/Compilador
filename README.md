@@ -24,11 +24,11 @@ Professor Adjunto
 
 Escrever, em C/C++ ou Java, a função SCAN para a linguagem abaixo:
 
-__Observação 1: o arquivo a ser compilado será passado ao seu compilador via argumento da linha de comando
+__Observação 1: o arquivo a ser compilado será passado ao seu compilador via argumento da linha de comando__
 
-__Observação 2: Imprimir apenas mensagens de erro.
+__Observação 2: Imprimir apenas mensagens de erro.__
 
-__Observação 3: A mensagem deve ser clara e específica de erro, sempre que for o caso, e em qualquer fase do compilador. Formato: "ERRO na linha n, coluna m, ultimo token lido t: mensagem específica do erro"
+__Observação 3: A mensagem deve ser clara e específica de erro, sempre que for o caso, e em qualquer fase do compilador. Formato: "ERRO na linha n, coluna m, ultimo token lido t: mensagem específica do erro"__
 
 
 

@@ -15,7 +15,7 @@ Linguagem: Java.
 
 
 
-# Diretrizes do Projeto:
+# Fase 1: Scanner
 
 Disciplina: Construção de Compiladores
 

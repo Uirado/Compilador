@@ -6,20 +6,18 @@ public class Tokenizer {
     
     private final Scanner leitor;
     private String ch = null;
-    private int linhaAtual;
-    private int colunaAtual;
     private Token ultimoTokenValido = null;
     private Token token = null;
     private int codigo;
     private String lexema;
+    private Cursor cursor;
     
     public Tokenizer(Scanner scan){
         leitor = scan;
         leitor.useDelimiter("");
-        linhaAtual = 1;
-        colunaAtual = 0;
+        cursor = new Cursor();
     }
-    
+
     public void run(){
         Token tempToken;
         
@@ -30,20 +28,10 @@ public class Tokenizer {
             tempToken = scan();
             
             if(tempToken != null){
-                tempToken.print();
+                Print.printToken(tempToken);
                 ultimoTokenValido = tempToken;
             } else{
                 if(!leitor.hasNext()) break;
-            }
-            
-            if(ch.charAt(0) == '\n') {
-                colunaAtual = 0;
-                linhaAtual++;
-            }
-            
-            while(ch.charAt(0) == '\n' || ch.charAt(0) == ' ' || ch.charAt(0) == '\t'){
-                getNextChar();
-                if(ch == null) break;
             }
         }
         
@@ -53,199 +41,149 @@ public class Tokenizer {
         lexema = "";
         token = null;
         int codErro = 0;
-           
-        //Automato
-        switch(ch.charAt(0)){
-            case '<':
-                lerProximoChar();
-                if(ch != null){
-                    switch(ch.charAt(0)){
-                        case '=': //token '<='
-                            defineTokenFound(true);
-                            break;
-                        default: //token '<'
-                            defineTokenFound(false);
-                            break;
-                    }
-                }
-                break;
-            case '>':
-                lerProximoChar();
-                if(ch != null){
-                    switch(ch.charAt(0)){
-                        case '=': //token '>='
-                            defineTokenFound(true);
-                            break;
-                        default: //token '>'
-                            defineTokenFound(false);
-                            break;
-                    }
-                }
-                break;
-            case '=':
-                lerProximoChar();
-                if(ch != null){
-                    switch(ch.charAt(0)){
-                        case '=': //token '=='
-                            defineTokenFound(true);
-                            break;
-                        default: //token '='
-                            defineTokenFound(false);
-                            break;
-                    }
-                }
-                break;
-            case '!':
-                lerProximoChar();
-                if(ch != null){
-                    switch(ch.charAt(0)){
-                        case '=': //token '!='
-                            defineTokenFound(true);
-                            break;
-                        default: //ERRO ! SOZINHO
-                            codErro = 2;
-                            token = null;
-                            break;
-                    }
-                }
-                break;
-            case '(':
-                defineTokenFound(true);
-                break;
-            case ')':
-                defineTokenFound(true);
-                break;
-            case '{':
-                defineTokenFound(true);
-                break;
-            case '}':
-                defineTokenFound(true);
-                break;
-            case ',':
-                defineTokenFound(true);
-                break;
-            case ';':
-                defineTokenFound(true);
-                break;
-            case '+':
-                defineTokenFound(true);
-                break;
-            case '-':
-                defineTokenFound(true);
-                break;
-            case '*':
-                defineTokenFound(true);
-                break;
-            case '/':
-                lerProximoChar();
-                if(ch != null){
-                    switch(ch.charAt(0)){
-                        case '/': //comentario de linha unica "//"
-                            consumirComentario(0);
-                            break;
-                        case '*': /* comentario multilinhas */
-                            codErro = consumirComentario(1);
-                            break;
-                        default: //token '/'
-                            defineTokenFound(false);
-                            break;
-                    }
-                }
-                break;
-                
-            default:
-                //aqui são tratados as entradas que obedecem a expressões regulares
-                if(ER.ehLetra(ch) || ch.charAt(0) == '_'){ //pode ser identificador ou palavra reservada
-                    while(ER.ehLetra(ch) || ch.charAt(0) == '_' || ER.ehDigito(ch)){
-                        lerProximoChar();
-                    }
-                    defineTokenFound(false, lexema);
-                    
-                }else if(ER.ehDigito(ch) || ch.charAt(0) == '.'){ //pode ser INTEIRO OU FLOAT
-                    while(ER.ehDigito(ch)){
-                        lerProximoChar();
-                    }
-                    if(ch.charAt(0) != '.'){ //é inteiro
-                        defineTokenFound(false, lexema);
-                    } else{ //vai ser float ou dar erro de má formacao
-                        lerProximoChar();
-                        if(ER.ehDigito(ch)){
-                            while(ER.ehDigito(ch)){
-                                lerProximoChar();
-                            }
-                            defineTokenFound(false, lexema);
-                        } else{
-                            codErro = 4;
-                        }
-                    }
-                    
-                } else if(ch.charAt(0) == '\''){ //pode ser um CHAR
-                    lerProximoChar();
-                    if(ER.ehDigito(ch) || ER.ehLetra(ch)){
-                        lerProximoChar();
-                        if(ch.charAt(0) == '\''){
-                            lerProximoChar();
-                            defineTokenFound(false, lexema);
-                        } else{
-                            codErro = 5;
-                        }
-                    }else{
-                        codErro = 5;
-                    }
-                    
-                }else{
-                    //erro de caractere invalido
-                    codErro = 1;
-                    break;
-                }
-        }
         
-        if(codErro > 0){
-            switch (codErro){
-                case 1:
-                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Caractere inválido: \"" + ch + "\"");
-                    getNextChar();
+        if(ehCharBranco(ch)){
+            if(ch.charAt(0) == '\n') {
+                cursor.addLinha();
+            }
+            getNextChar();
+        } else if(simboloSimples(ch)){ // simbolos simples: ( ) { } , ; + - *
+                codErro = defineTokenFound(true);
+        } else{
+            //Automato
+            switch(ch.charAt(0)){
+                case '<':
+                    lerProximoChar();
+                    if(ch != null){
+                        switch(ch.charAt(0)){
+                            case '=': //token '<='
+                                codErro = defineTokenFound(true);
+                                break;
+                            default: //token '<'
+                                codErro = defineTokenFound(false);
+                                break;
+                        }
+                    }
                     break;
-                case 2:
-                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação do operador relacional DIFERENTE. Caractere \"!\" sozinho");
+                case '>':
+                    lerProximoChar();
+                    if(ch != null){
+                        switch(ch.charAt(0)){
+                            case '=': //token '>='
+                                codErro = defineTokenFound(true);
+                                break;
+                            default: //token '>'
+                                codErro = defineTokenFound(false);
+                                break;
+                        }
+                    }
                     break;
-                case 3:
-                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "EOF antes de fechamento de comentário: faltando '*/'");
+                case '=':
+                    lerProximoChar();
+                    if(ch != null){
+                        switch(ch.charAt(0)){
+                            case '=': //token '=='
+                                codErro = defineTokenFound(true);
+                                break;
+                            default: //token '='
+                                codErro = defineTokenFound(false);
+                                break;
+                        }
+                    }
                     break;
-                case 4:
-                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação de FLOAT \""+lexema+"\"");
+                case '!':
+                    lerProximoChar();
+                    if(ch != null){
+                        switch(ch.charAt(0)){
+                            case '=': //token '!='
+                                codErro = defineTokenFound(true);
+                                break;
+                            default: //ERRO ! SOZINHO
+                                codErro = 2;
+                                token = null;
+                                break;
+                        }
+                    }
                     break;
-                case 5:
-                    Erro.tokenError(linhaAtual, colunaAtual, ultimoTokenValido, "Má formação de CHAR \""+lexema+"\"");
+                case '/':
+                    lerProximoChar();
+                    if(ch != null){
+                        switch(ch.charAt(0)){
+                            case '/': //comentario de linha unica "//"
+                                consumirComentario(0);
+                                break;
+                            case '*': /* comentario multilinhas */
+                                codErro = consumirComentario(1);
+                                break;
+                            default: //token '/'
+                                codErro = defineTokenFound(false);
+                                break;
+                        }
+                    }
                     break;
+
+                default:
+                    //aqui são tratados as entradas que obedecem a expressões regulares
+                    if(ER.ehLetra(ch) || ch.charAt(0) == '_'){ //pode ser identificador ou palavra reservada
+                        montarPalavra();
+
+                    }else if(ER.ehDigito(ch) || ch.charAt(0) == '.'){ //pode ser INTEIRO OU FLOAT
+                        codErro = montarNumero();
+
+                    } else if(ch.charAt(0) == '\''){ //pode ser um CHAR
+                        codErro = montarChar();
+
+                    }else{
+                        //erro de caractere invalido
+                        codErro = 1;
+                        break;
+                    }
             }
         }
+        
+        reportErro(codErro);
         return token;
     }
 
     private void getNextChar() {
         if(leitor.hasNext()){
             ch =  leitor.next();
-            colunaAtual++;
+            cursor.addColuna();            
         } else{
             ch = null;
         }
     }
+    
+    private boolean ehCharBranco(String ch){
+        if(ch.charAt(0) == '\n' || ch.charAt(0) == ' ' || ch.charAt(0) == '\t'){
+            return true;
+        } else{
+            return false;
+        }
+    }
 
-    private void defineTokenFound(boolean lerProximo) {
+    private int defineTokenFound(boolean lerProximo) {
         if(lerProximo){
             lerProximoChar();
         }
         codigo = TabelaDeSimbolos.lookUp(lexema);
+        if(codigo == -1){
+            return 6;
+        }
         token = new Token(codigo);
+        return 0;
     }
     
-    private void defineTokenFound(boolean lerProximo, String lexema) {
+    private int defineTokenFound(boolean lerProximo, String lexema) {
         if(lerProximo){
             lerProximoChar();
         }
         codigo = TabelaDeSimbolos.lookUp(lexema);
+        if(codigo == -1){
+            return 7;
+        }
         token = new Token(codigo, lexema);
+        return 0;
     }
     
     private void lerProximoChar(){
@@ -260,7 +198,7 @@ public class Tokenizer {
             
             while(ch.charAt(0) != '\n'){
                 ch = leitor.next();
-                colunaAtual++;
+                cursor.addColuna();
             }
         } else{ /* Comentario multilinha */
             
@@ -276,13 +214,12 @@ public class Tokenizer {
                             }
                         }
                     } else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
-                        linhaAtual++;
-                        colunaAtual = 0;
+                        cursor.addLinha();
                     }
                 }
                 if(ch == null){
                     //fim de arquivo sem fechar o comentario '*/'
-                    colunaAtual--;
+                    //colunaAtual--;
                     erro = 3;
                     break;
                 }
@@ -292,6 +229,98 @@ public class Tokenizer {
         token = null;
         return erro;
     }
+    
+    private void reportErro(int codErro) {
+        if(codErro > 0){
+            switch (codErro){
+                case 1:
+                    Erro.tokenError(cursor, ultimoTokenValido, "Caractere inválido: \"" + ch + "\"");
+                    getNextChar();
+                    break;
+                case 2:
+                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação do operador relacional DIFERENTE. Caractere \"!\" sozinho");
+                    break;
+                case 3:
+                    Erro.tokenError(cursor, ultimoTokenValido, "EOF dentro de comentário");
+                    break;
+                case 4:
+                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação de FLOAT \""+lexema+"\"");
+                    break;
+                case 5:
+                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação de CHAR \""+lexema+"\"");
+                    break;
+                case 6:
+                    Erro.tokenError(cursor, ultimoTokenValido, "Token não encontrado na tabela de símbolos \""+lexema+"\"");
+                    break;
+                default:
+                    //NENHUM ERRO
+                    break;
+            }
+        }
+    }
 
+    private boolean simboloSimples(String ch){
+        char c = ch.charAt(0);
+        if(
+            c == '(' ||
+            c == ')' ||
+            c == '{' ||
+            c == '}' ||
+            c == ',' ||
+            c == ';' ||
+            c == '+' ||
+            c == '-' ||
+            c == '*'
+        )
+            return true;
+        else
+            return false;
+    }
+
+    private int montarPalavra() {
+        while(ER.ehLetra(ch) || ch.charAt(0) == '_' || ER.ehDigito(ch)){
+            lerProximoChar();
+        }
+        return defineTokenFound(false, lexema);
+    }
+
+    private int montarNumero() {
+        int codErro = 0;
+        while(ER.ehDigito(ch)){
+            lerProximoChar();
+        }
+        if(ch.charAt(0) != '.'){ //é inteiro
+            codErro = defineTokenFound(false, lexema);
+        } else{ //vai ser float ou dar erro de má formacao
+            lerProximoChar();
+            if(ER.ehDigito(ch)){
+                while(ER.ehDigito(ch)){
+                    lerProximoChar();
+                }
+                codErro = defineTokenFound(false, lexema);
+            } else{
+                codErro = 4;
+            }
+        }
+        return codErro;
+    }
+
+    private int montarChar() {
+        int codErro = 0;
+        do{
+            lerProximoChar();
+            if(ch.charAt(0) == '\n' || ch == null){
+                codErro = 5;
+                return codErro;
+            }
+        }while(ch.charAt(0) != '\'');
+        lerProximoChar();
+        if(ER.ehChar(lexema)){
+            codErro = defineTokenFound(false, lexema);
+        } else{
+            codErro = 5;
+        }
+        return codErro;
+    }
     
 }

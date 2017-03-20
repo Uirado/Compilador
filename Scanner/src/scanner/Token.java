@@ -28,19 +28,4 @@ class Token {
     public void setLexema(String lexema) {
         this.lexema = lexema;
     }
-
-    void print() {
-        String strCodigo;
-        if(codigo < 10){
-            strCodigo = "0" + codigo;
-        } else{
-            strCodigo = Integer.toString(codigo);
-        }
-        
-        if(lexema == null || codigo < 50){
-            Print.show("(" + strCodigo + ")   " + TabelaDeSimbolos.getNome(codigo) +"");
-        } else{
-            Print.show("(" + strCodigo + ")   [" + TabelaDeSimbolos.getNome(codigo) + "] \"" + lexema + "\"");
-        }
-    }
 }

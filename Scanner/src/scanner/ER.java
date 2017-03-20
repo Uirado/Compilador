@@ -62,6 +62,4 @@ public class ER {
             return false;                
         }
     }
-    
-    
 }

@@ -1,14 +1,18 @@
-package scanner;
+package util;
+
+import scanner.Cursor;
+import compilador.TabelaDeSimbolos;
+import scanner.Token;
 
 public class Erro {
-    private static final String[] mensagens = 
+    private static final String[] MENSAGENS = 
     {
         "Nenhum arquivo lido", //0
         "Parametro inválido" //1
     };
     
     public static void show(int codigo){
-        Print.show(mensagens[codigo]);
+        Print.show(MENSAGENS[codigo]);
     }
     
     public static void tokenError(Cursor cursor, Token tok, String detalhes){

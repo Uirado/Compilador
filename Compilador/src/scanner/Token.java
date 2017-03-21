@@ -1,6 +1,6 @@
 package scanner;
 
-class Token {
+public class Token {
     private int codigo;
     private String lexema = null;
 

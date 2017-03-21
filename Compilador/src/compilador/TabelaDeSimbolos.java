@@ -1,10 +1,11 @@
-package scanner;
+package compilador;
 
+import scanner.ER;
 import java.util.Arrays;
 import java.util.List;
 
 public class TabelaDeSimbolos {
-    private static final List<String> tabela = Arrays.asList(
+    private static final List<String> TABELA = Arrays.asList(
         "main",
         "if",
         "else",
@@ -34,8 +35,8 @@ public class TabelaDeSimbolos {
     );
 
     public static int lookUp(String lexema){
-        if(tabela.contains(lexema)){
-            return tabela.indexOf(lexema);
+        if(TABELA.contains(lexema)){
+            return TABELA.indexOf(lexema);
         } else if(ER.ehIdentificador(lexema)){
             return 50;
         } else if(ER.ehInteiro(lexema)){
@@ -57,7 +58,7 @@ public class TabelaDeSimbolos {
                 case 53: return "<valor_CHAR>";
             }
         } else{
-            switch(tabela.get(codigo)){
+            switch(TABELA.get(codigo)){
                 case "main":    return "<palreservada_MAIN>";
                 case "if":      return "<palreservada_IF>";
                 case "else":    return "<palreservada_ELSE>";

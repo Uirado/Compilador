@@ -10,7 +10,7 @@ public class ER {
     static String FLOAT = D+"*."+D+"+";
     static String CHAR = "('"+L+"'|'"+D+"')";
     
-    static boolean ehLetra(String ch) {
+    public static boolean ehLetra(String ch) {
         if(ch.matches(L)){
             //Print.show("É letra");
             return true;
@@ -20,7 +20,7 @@ public class ER {
         }
     }
     
-    static boolean ehDigito(String ch) {
+    public static boolean ehDigito(String ch) {
         if(ch.matches(D)){
             //Print.show("É número"); 
             return true;
@@ -31,7 +31,7 @@ public class ER {
         
     }
     
-    static boolean ehChar(String lexema){
+    public static boolean ehChar(String lexema){
         if(lexema.matches(CHAR)){
             return true;
         }else{
@@ -39,7 +39,7 @@ public class ER {
         }
     }
 
-    static boolean ehIdentificador(String lexema) {
+    public static boolean ehIdentificador(String lexema) {
         if(lexema.matches(ID)){
             return true;
         }else{
@@ -47,7 +47,7 @@ public class ER {
         }
     }
 
-    static boolean ehInteiro(String lexema) {
+    public static boolean ehInteiro(String lexema) {
         if(lexema.matches(INTEIRO)){
             return true;
         }else{
@@ -55,11 +55,29 @@ public class ER {
         }
     }
 
-    static boolean ehFloat(String lexema) {
+    public static boolean ehFloat(String lexema) {
         if(lexema.matches(FLOAT)){
             return true;
         }else{
             return false;                
         }
+    }
+    
+    public static boolean ehSimboloSimples(String ch){
+        char c = ch.charAt(0);
+        if(
+            c == '(' ||
+            c == ')' ||
+            c == '{' ||
+            c == '}' ||
+            c == ',' ||
+            c == ';' ||
+            c == '+' ||
+            c == '-' ||
+            c == '*'
+        )
+            return true;
+        else
+            return false;
     }
 }

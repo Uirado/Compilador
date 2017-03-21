@@ -1,5 +1,11 @@
 package scanner;
 
+import util.Erro;
+import util.Erro;
+import util.Print;
+import util.Print;
+import compilador.TabelaDeSimbolos;
+import compilador.TabelaDeSimbolos;
 import java.util.Scanner;
 
 public class Tokenizer {
@@ -47,7 +53,7 @@ public class Tokenizer {
                 cursor.addLinha();
             }
             getNextChar();
-        } else if(simboloSimples(ch)){ // simbolos simples: ( ) { } , ; + - *
+        } else if(ER.ehSimboloSimples(ch)){ // simbolos simples: ( ) { } , ; + - *
                 codErro = defineTokenFound(true);
         } else{
             //Automato
@@ -123,7 +129,6 @@ public class Tokenizer {
                     break;
 
                 default:
-                    //aqui são tratados as entradas que obedecem a expressões regulares
                     if(ER.ehLetra(ch) || ch.charAt(0) == '_'){ //pode ser identificador ou palavra reservada
                         montarPalavra();
 
@@ -257,24 +262,6 @@ public class Tokenizer {
                     break;
             }
         }
-    }
-
-    private boolean simboloSimples(String ch){
-        char c = ch.charAt(0);
-        if(
-            c == '(' ||
-            c == ')' ||
-            c == '{' ||
-            c == '}' ||
-            c == ',' ||
-            c == ';' ||
-            c == '+' ||
-            c == '-' ||
-            c == '*'
-        )
-            return true;
-        else
-            return false;
     }
 
     private int montarPalavra() {

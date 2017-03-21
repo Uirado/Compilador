@@ -9,7 +9,7 @@ package scanner;
  *
  * @author cais
  */
-class Cursor {
+public class Cursor {
     
     private int linha;
     private int coluna;

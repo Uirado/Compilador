@@ -1,4 +1,7 @@
-package scanner;
+package util;
+
+import compilador.TabelaDeSimbolos;
+import scanner.Token;
 
 public class Print {
     public static void show(String texto){

@@ -1,10 +1,6 @@
 package scanner;
 
 import util.Erro;
-import util.Erro;
-import util.Print;
-import util.Print;
-import compilador.TabelaDeSimbolos;
 import compilador.TabelaDeSimbolos;
 import java.util.Scanner;
 
@@ -17,43 +13,32 @@ public class Tokenizer {
     private int codigo;
     private String lexema;
     private Cursor cursor;
+    private boolean EOF = false;
     
     public Tokenizer(Scanner scan){
         leitor = scan;
         leitor.useDelimiter("");
         cursor = new Cursor();
-    }
-
-    public void run(){
-        Token tempToken;
         
-        getNextChar();
-            
-        while(ch != null){
-            
-            tempToken = scan();
-            
-            if(tempToken != null){
-                Print.printToken(tempToken);
-                ultimoTokenValido = tempToken;
-            } else{
-                if(!leitor.hasNext()) break;
-            }
-        }
-        
+        getNextChar(); //ler primeiro char
     }
     
-    private Token scan(){
+    public Token scan(){
         lexema = "";
         token = null;
         int codErro = 0;
         
-        if(ehCharBranco(ch)){
+        while(ehCharBranco(ch)){
             if(ch.charAt(0) == '\n') {
                 cursor.addLinha();
             }
             getNextChar();
-        } else if(ER.ehSimboloSimples(ch)){ // simbolos simples: ( ) { } , ; + - *
+            if(EOF){
+                return null;
+            }
+        }
+            
+        if(ER.ehSimboloSimples(ch)){ // simbolos simples: ( ) { } , ; + - *
                 codErro = defineTokenFound(true);
         } else{
             //Automato
@@ -117,9 +102,14 @@ public class Tokenizer {
                         switch(ch.charAt(0)){
                             case '/': //comentario de linha unica "//"
                                 consumirComentario(0);
+                                token = scan();
                                 break;
                             case '*': /* comentario multilinhas */
+                                getNextChar();
                                 codErro = consumirComentario(1);
+                                if(codErro == 0){
+                                    token = scan();
+                                }
                                 break;
                             default: //token '/'
                                 codErro = defineTokenFound(false);
@@ -145,8 +135,12 @@ public class Tokenizer {
                     }
             }
         }
-        
         reportErro(codErro);
+        
+        if(token != null){
+            ultimoTokenValido = token;
+        }
+        
         return token;
     }
 
@@ -156,11 +150,12 @@ public class Tokenizer {
             cursor.addColuna();            
         } else{
             ch = null;
+            EOF = true;
         }
     }
     
     private boolean ehCharBranco(String ch){
-        if(ch.charAt(0) == '\n' || ch.charAt(0) == ' ' || ch.charAt(0) == '\t'){
+        if(ch != null && (ch.charAt(0) == '\n' || ch.charAt(0) == ' ' || ch.charAt(0) == '\t')){
             return true;
         } else{
             return false;
@@ -207,31 +202,23 @@ public class Tokenizer {
             }
         } else{ /* Comentario multilinha */
             
-            while(true){
-                getNextChar();
-                if(ch != null){
-                    if(ch.charAt(0) == '*'){
+            while(!EOF){
+                if(ch.charAt(0) == '*'){
+                    getNextChar();
+                    if(!EOF && ch.charAt(0) == '/'){
                         getNextChar();
-                        if(ch != null){
-                            if(ch.charAt(0) == '/'){
-                                getNextChar();
-                                break;
-                            }
-                        }
-                    } else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
-                        cursor.addLinha();
+                        break;
                     }
+                } else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
+                    cursor.addLinha();
                 }
-                if(ch == null){
-                    //fim de arquivo sem fechar o comentario '*/'
-                    //colunaAtual--;
-                    erro = 3;
-                    break;
-                }
-            }   
+                getNextChar();
+                
+            }
+            if(EOF){
+                erro = 3;
+            }
         }
-        
-        token = null;
         return erro;
     }
     
@@ -309,5 +296,13 @@ public class Tokenizer {
         }
         return codErro;
     }
-    
+
+    public boolean eof() {
+        return EOF;
+    }
+
+    public Token getUltimoTokenValido() {
+        return ultimoTokenValido;
+    }
+
 }

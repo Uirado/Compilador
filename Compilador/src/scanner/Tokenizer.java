@@ -204,12 +204,14 @@ public class Tokenizer {
             
             while(!EOF){
                 if(ch.charAt(0) == '*'){
-                    getNextChar();
+                    while(!EOF && ch.charAt(0) == '*'){
+                        getNextChar();
+                    }
                     if(!EOF && ch.charAt(0) == '/'){
                         getNextChar();
                         break;
                     }
-                } else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
+                }else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
                     cursor.addLinha();
                 }
                 getNextChar();
@@ -249,6 +251,7 @@ public class Tokenizer {
                     break;
             }
         }
+        
     }
 
     private int montarPalavra() {

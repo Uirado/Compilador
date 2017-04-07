@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TabelaDeSimbolos {
+    CodigosToken nomesTokens;
+    
     private static final List<String> TABELA = Arrays.asList(
         "main",
         "if",
@@ -52,43 +54,44 @@ public class TabelaDeSimbolos {
     public static String getNome(int codigo){
         if(codigo >= 50){
             switch (codigo){
-                case 50: return "<IDENTIFICADOR>";
-                case 51: return "<valor_INTEIRO>";
-                case 52: return "<valor_FLOAT>";
-                case 53: return "<valor_CHAR>";
+                case 50: return "ID";
+                case 51: return "VALOR_INT";
+                case 52: return "VALOR_FLOAT";
+                case 53: return "VALOR_CHAR";
             }
-        } else{
+        } else if(codigo >= 0){
             switch(TABELA.get(codigo)){
-                case "main":    return "<palreservada_MAIN>";
-                case "if":      return "<palreservada_IF>";
-                case "else":    return "<palreservada_ELSE>";
-                case "while":   return "<palreservada_WHILE>";
-                case "do":      return "<palreservada_DO>";
-                case "for":     return "<palreservada_FOR>";
-                case "int":     return "<palreservada_INT>";
-                case "float":   return "<palreservada_FLOAT>";
-                case "char":    return "<palreservada_CHAR>";
-                case "<":       return "<oprelacional_MENOR>";
-                case ">":       return "<oprelacional_MAIOR>";
-                case "<=":      return "<oprelacional_MENOR_IGUAL>";
-                case ">=":      return "<oprelacional_MAIOR_IGUAL>";
-                case "==":      return "<oprelacional_IGUAL>";        
-                case "!=":      return "<oprelacional_DIFERENTE>";    
-                case "+":       return "<oparitmetico_SOMA>";
-                case "-":       return "<oparitmetico_SUBTRACAO>";
-                case "*":       return "<oparitmetico_MULTIPLICACAO>";
-                case "/":       return "<oparitmetico_DIVISAO>";
-                case "=":       return "<oparitmetico_ATRIBUICAO>";
-                case ")":       return "<especial_FECHA_PARENTESES>";
-                case "(":       return "<especial_ABRE_PARENTESES>";
-                case "{":       return "<especial_ABRE_CHAVES>";
-                case "}":       return "<especial_FECHA_CHAVES>";
-                case ",":       return "<especial_VIRGULA>";
-                case ";":       return "<especial_PONTO_VIRGULA>";
-                default:        return "";
+                case "main":    return "MAIN";
+                case "if":      return "IF";
+                case "else":    return "ELSE";
+                case "while":   return "WHILE";
+                case "do":      return "DO";
+                case "for":     return "FOR";
+                case "int":     return "INT";
+                case "float":   return "FLOAT";
+                case "char":    return "CHAR";
+                case "<":       return "MENOR";
+                case ">":       return "MAIOR";
+                case "<=":      return "MENOR_IGUAL";
+                case ">=":      return "MAIOR_IGUAL";
+                case "==":      return "IGUAL";        
+                case "!=":      return "DIFERENTE";    
+                case "+":       return "SOMA";
+                case "-":       return "SUBTRACAO";
+                case "*":       return "MULTIPLICACAO";
+                case "/":       return "DIVISAO";
+                case "=":       return "ATRIBUICAO";
+                case ")":       return "FECHA_PARENTESES";
+                case "(":       return "ABRE_PARENTESES";
+                case "{":       return "ABRE_CHAVES";
+                case "}":       return "FECHA_CHAVES";
+                case ",":       return "VIRGULA";
+                case ";":       return "PONTO_VIRGULA";
                 }
-        
         }
-        return "";
+        return "EOF";
     }
+    
+    
+    
 }

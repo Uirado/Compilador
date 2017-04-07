@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import parser.Parser;
 import scanner.Token;
 
 public class Main {
@@ -17,22 +18,14 @@ public class Main {
     
     public static void main(String[] args){
         Tokenizer scanner;
-        Token tempToken;
-        
+        Parser parser;
         if(args.length == 1){
             enderecoArquivo = args[0];
             scanner = abrirArquivo(enderecoArquivo);
             
             if(scanner != null){
-                while(!scanner.eof()){
-                    tempToken = scanner.scan();
-
-                    if(tempToken != null){
-                        Print.printToken(tempToken);
-                    } 
-                    //se o token for NULL e não for fim de arquivo: ERRO de token
-                    //se o token NULL e for fim de arquivo: Poder ter erro de comentário "/* EOF" ou apenas fim de arquivo
-                }
+                parser = new Parser(scanner);
+                parser.run();
             } else{
                 Erro.show(0);
             }

@@ -1,7 +1,9 @@
 package util;
 
+import compilador.CodigosToken;
 import scanner.Cursor;
 import compilador.TabelaDeSimbolos;
+import java.util.List;
 import scanner.Token;
 
 public class Erro {
@@ -30,7 +32,33 @@ public class Erro {
                 Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido "+ lex +": "+ detalhes);
             }
         }
+        System.exit(0);
         
+    }
+
+    public static void sintaxError(List<Integer> cod, Token token, boolean eof, Cursor cursor) {
+        String msg1 = "";
+        String msg2 = "";
+        if(eof){
+            msg1 = "Fim de arquivo. ";
+        }
         
+        msg2 = "Token esperado: " + TabelaDeSimbolos.getNome(cod.get(0));;
+        for(int i = 1; i < cod.size(); i++){
+            msg2 += " ou " + TabelaDeSimbolos.getNome(cod.get(i));
+        }
+        
+        tokenError(cursor, token, msg1 + msg2);
+    }
+    
+    public static void sintaxError(int cod, Token token, boolean eof, Cursor cursor) {
+        String msg1 = "";
+        String msg2 = "";
+        if(eof){
+            msg1 = "Fim de arquivo. ";
+        }
+        msg2 = "Token esperado: " + TabelaDeSimbolos.getNome(cod);
+
+        tokenError(cursor, token, msg1 + msg2);
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import scanner.Token;
 import scanner.Tokenizer;
 import util.Erro;
+import util.Print;
 public class Parser {
     Token token;
     Tokenizer scanner;
@@ -14,10 +15,13 @@ public class Parser {
     }
     
     public void run(){
+//        while(!scanner.eof()){
+//            scan();
+//        }
         scan();
         if(!scanner.eof()){
             programa();
-        }//else parserError(First.programa);
+        }else parserError(First.programa);
     }
     
     private void programa(){
@@ -191,9 +195,9 @@ public class Parser {
             }else parserError(CodigosToken.FECHA_PARENTESES);
         } else if(token.getCodigo() == CodigosToken.ID){
              scan();
-        } else if(token.getCodigo() == CodigosToken.VALOR_FLOAT){
+        } else if(token.getCodigo() == CodigosToken.VALOR_REAL){
              scan();
-        } else if(token.getCodigo() == CodigosToken.VALOR_INT){
+        } else if(token.getCodigo() == CodigosToken.VALOR_INTEIRO){
              scan();
         } else if(token.getCodigo() == CodigosToken.VALOR_CHAR){
              scan();
@@ -251,10 +255,9 @@ public class Parser {
         } else parserError(CodigosToken.ID);
     }
 
-    private boolean scan() {
+    private void scan() {
         token = scanner.scan();
-        if(token != null) return true;
-        return false;
+        //if(token != null) Print.printToken(token);
     }
 
     private void parserError(int codigoToken) {

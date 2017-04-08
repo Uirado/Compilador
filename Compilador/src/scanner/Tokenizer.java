@@ -1,7 +1,7 @@
 package scanner;
 
 import util.Erro;
-import compilador.TabelaDeSimbolos;
+import compilador.CodigosToken;
 import java.util.Scanner;
 
 public class Tokenizer {
@@ -175,20 +175,11 @@ public class Tokenizer {
         if(lerProximo){
             lerProximoChar();
         }
-        codigo = TabelaDeSimbolos.lookUp(lexema);
-        token = new Token(codigo);
-        return 0;
-    }
-    
-    private int defineTokenFound(boolean lerProximo, String lexema) {
-        if(lerProximo){
-            lerProximoChar();
-        }
-        codigo = TabelaDeSimbolos.lookUp(lexema);
-
+        codigo = CodigosToken.lookUp(lexema);
         token = new Token(codigo, lexema);
         return 0;
     }
+   
     
     private void lerProximoChar(){
         lexema += ch;
@@ -262,7 +253,7 @@ public class Tokenizer {
         while(ER.ehLetra(ch) || ch.charAt(0) == '_' || ER.ehDigito(ch)){
             lerProximoChar();
         }
-        return defineTokenFound(false, lexema);
+        return defineTokenFound(false);
     }
 
     private int montarNumero() {
@@ -271,14 +262,14 @@ public class Tokenizer {
             lerProximoChar();
         }
         if(ch.charAt(0) != '.'){ //é inteiro
-            codErro = defineTokenFound(false, lexema);
+            codErro = defineTokenFound(false);
         } else{ //vai ser float ou dar erro de má formacao
             lerProximoChar();
             if(ER.ehDigito(ch)){
                 while(ER.ehDigito(ch)){
                     lerProximoChar();
                 }
-                codErro = defineTokenFound(false, lexema);
+                codErro = defineTokenFound(false);
             } else{
                 codErro = 4;
             }
@@ -297,7 +288,7 @@ public class Tokenizer {
         }while(ch.charAt(0) != '\'');
         lerProximoChar();
         if(ER.ehChar(lexema)){
-            codErro = defineTokenFound(false, lexema);
+            codErro = defineTokenFound(false);
         } else{
             codErro = 5;
         }
@@ -317,7 +308,7 @@ public class Tokenizer {
     }
 
     private Token tokenEOF() {
-        ultimoTokenValido = new Token(-1);
+        ultimoTokenValido = new Token(-1, null);
         return ultimoTokenValido;
     }
 

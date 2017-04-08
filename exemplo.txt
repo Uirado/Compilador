@@ -1,0 +1,8 @@
+int main(){
+	int a;
+int b;
+int c;
+float a;
+
+if(a / 5 <= (35 / 987 * 10) -90){
+}}

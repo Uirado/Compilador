@@ -16,11 +16,10 @@ import java.util.List;
  */
 public class First {
     
-    static List<Integer> fator = Arrays.asList(
-            CodigosToken.ABRE_PARENTESES,
+    static List<Integer> fator = Arrays.asList(CodigosToken.ABRE_PARENTESES,
             CodigosToken.ID,
-            CodigosToken.VALOR_FLOAT,
-            CodigosToken.VALOR_INT,
+            CodigosToken.VALOR_REAL,
+            CodigosToken.VALOR_INTEIRO,
             CodigosToken.VALOR_CHAR
     );
     

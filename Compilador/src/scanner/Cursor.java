@@ -11,7 +11,7 @@ package scanner;
  */
 public class Cursor {
     
-    private int linha;
+    public int linha;
     private int coluna;
     
     public Cursor(){
@@ -34,5 +34,9 @@ public class Cursor {
 
     public void addColuna() {
         this.coluna++;
+    }
+    
+    public void addColuna(int qtd) {
+        this.coluna += qtd;
     }
 }

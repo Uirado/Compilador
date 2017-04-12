@@ -1,7 +1,7 @@
 package scanner;
 
 import util.Erro;
-import compilador.TabelaDeSimbolos;
+import compilador.CodigosToken;
 import java.util.Scanner;
 
 public class Tokenizer {
@@ -28,13 +28,19 @@ public class Tokenizer {
         token = null;
         int codErro = 0;
         
+        if(EOF){
+            //token de fim de arquivo
+            return tokenEOF();
+        }
+        
         while(ehCharBranco(ch)){
-            if(ch.charAt(0) == '\n') {
+            if(ch.charAt(0) == '\n' && leitor.hasNext()) {
                 cursor.addLinha();
             }
             getNextChar();
             if(EOF){
-                return null;
+                //token de fim de arquivo
+                return tokenEOF();
             }
         }
             
@@ -147,7 +153,10 @@ public class Tokenizer {
     private void getNextChar() {
         if(leitor.hasNext()){
             ch =  leitor.next();
-            cursor.addColuna();            
+            cursor.addColuna();
+            if(ch.charAt(0) == '\t'){
+                cursor.addColuna(3);
+            }
         } else{
             ch = null;
             EOF = true;
@@ -166,25 +175,11 @@ public class Tokenizer {
         if(lerProximo){
             lerProximoChar();
         }
-        codigo = TabelaDeSimbolos.lookUp(lexema);
-        if(codigo == -1){
-            return 6;
-        }
-        token = new Token(codigo);
-        return 0;
-    }
-    
-    private int defineTokenFound(boolean lerProximo, String lexema) {
-        if(lerProximo){
-            lerProximoChar();
-        }
-        codigo = TabelaDeSimbolos.lookUp(lexema);
-        if(codigo == -1){
-            return 7;
-        }
+        codigo = CodigosToken.lookUp(lexema);
         token = new Token(codigo, lexema);
         return 0;
     }
+   
     
     private void lerProximoChar(){
         lexema += ch;
@@ -258,7 +253,7 @@ public class Tokenizer {
         while(ER.ehLetra(ch) || ch.charAt(0) == '_' || ER.ehDigito(ch)){
             lerProximoChar();
         }
-        return defineTokenFound(false, lexema);
+        return defineTokenFound(false);
     }
 
     private int montarNumero() {
@@ -267,14 +262,14 @@ public class Tokenizer {
             lerProximoChar();
         }
         if(ch.charAt(0) != '.'){ //é inteiro
-            codErro = defineTokenFound(false, lexema);
+            codErro = defineTokenFound(false);
         } else{ //vai ser float ou dar erro de má formacao
             lerProximoChar();
             if(ER.ehDigito(ch)){
                 while(ER.ehDigito(ch)){
                     lerProximoChar();
                 }
-                codErro = defineTokenFound(false, lexema);
+                codErro = defineTokenFound(false);
             } else{
                 codErro = 4;
             }
@@ -293,7 +288,7 @@ public class Tokenizer {
         }while(ch.charAt(0) != '\'');
         lerProximoChar();
         if(ER.ehChar(lexema)){
-            codErro = defineTokenFound(false, lexema);
+            codErro = defineTokenFound(false);
         } else{
             codErro = 5;
         }
@@ -305,6 +300,15 @@ public class Tokenizer {
     }
 
     public Token getUltimoTokenValido() {
+        return ultimoTokenValido;
+    }
+    
+    public Cursor getCursor(){
+        return cursor;
+    }
+
+    private Token tokenEOF() {
+        ultimoTokenValido = new Token(-1, null);
         return ultimoTokenValido;
     }
 

@@ -1,6 +1,6 @@
 package util;
 
-import compilador.TabelaDeSimbolos;
+import compilador.CodigosToken;
 import scanner.Token;
 
 public class Print {
@@ -23,10 +23,13 @@ public class Print {
             strCodigo = Integer.toString(codigo);
         }
         
-        if(lexema == null || codigo < 50){
-            Print.show(strCodigo + " " + TabelaDeSimbolos.getNome(codigo));
+        if(codigo < 0){
+            Print.show(strCodigo + " " + CodigosToken.getNome(codigo));
+        } else if(codigo < 50){
+            Print.show(strCodigo + " \"" + lexema + "\"");
         } else{
-            Print.show(strCodigo + " " + TabelaDeSimbolos.getNome(codigo) + " \"" + lexema + "\"");
+            Print.show(strCodigo + " " + CodigosToken.getNome(codigo) + " \"" + lexema + "\"");
         }
+        
     }
 }

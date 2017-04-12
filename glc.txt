@@ -1,0 +1,65 @@
+<programa> 	  ::= 	int main"("")" <bloco>
+
+
+<decl_var> 	  ::=	<tipo> <id> {,<id>}* ";"
+
+
+<tipo> 		  ::=	int
+			float
+			char
+
+
+<comando> 	  ::=	<comando_básico>
+			<iteração>
+			<IF>
+
+<IF>		  ::=	if "("<expr_relacional>")" <comando> {else <comando>}?			
+
+
+<comando_básico>  ::= 	<atribuição>
+			<bloco>
+
+<bloco> 	  ::=	“{“ {<decl_var>}* {<comando>}* “}”
+
+
+<iteração> 	  ::= 	while "("<expr_relacional>")" <comando>
+			do <comando> while "("<expr_relacional>")"";"
+
+
+<atribuição> 	  ::= 	<id> "=" <expr_arit> ";"
+
+
+<expr_relacional> ::= 	<expr_arit> <op_relacional> <expr_arit>
+
+
+<op_relacional>	  ::=	"==" | "!=" | "<" | ">" | "<=" | ">="
+
+
+/*
+<expr_arit> 	  ::= 	<expr_arit> "+" <termo>
+			<expr_arit> "-" <termo>
+			<termo>
+
+
+<termo> 	  ::=	<termo> "*" <fator>
+			<termo> “/” <fator>
+			<fator>
+*/
+
+//expr_arit remodelado
+<expr_arit>	  ::=	<termo> <expr_arit2>
+<expr_arit2>	  ::=	"+" <termo> <expr_arit2>
+			"-" <termo> <expr_arit2>
+			λ
+
+
+//termo remodelado
+<termo>		  ::= 	<fator> ((* | /) <fator>)*
+
+
+<fator> 	  ::=	“(“ <expr_arit> “)”
+			<id>
+			<real>
+			<inteiro>
+			<char>
+

@@ -21,6 +21,10 @@ public class Parser {
         scan();
         if(!scanner.eof()){
             programa();
+            if(!scanner.eof()){
+                parserError(CodigosToken.EOF);
+            }
+            
         }else parserError(First.programa);
     }
     

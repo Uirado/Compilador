@@ -10,7 +10,7 @@ public class Erro {
     private static final String[] MENSAGENS = 
     {
         "Nenhum arquivo lido", //0
-        "Parametro inválido" //1
+        "Parametro invalido" //1
     };
     
     public static void show(int codigo){
@@ -56,4 +56,19 @@ public class Erro {
 
         tokenError(cursor, token, msg1 + msg2);
     }
+
+    public static void semanticError(String lexema1, String lexema2, int codErro, Token token, Cursor cursor) {
+        String msg;
+        switch(codErro){
+            case 0: msg = "Identificador \"" + lexema1 + "\" repetido no mesmo escopo."; break;
+            case 1: msg = "Variavel \"" + lexema1 + "\" nao declarada."; break;
+            case 2: msg = "Atribuicao de tipos incompativeis: \""+ lexema1 + "\" <- \"" + lexema2 + "\"."; break;
+            case 3: msg = "Tipo \"char\" nao pode ser operado com outros tipos: \""+ lexema1 + "\" <> \"" + lexema2 + "\"."; break;
+            default: msg = ""; break;
+        }
+        
+        tokenError(cursor, token, msg);
+    }
+
+
 }

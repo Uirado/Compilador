@@ -2,13 +2,17 @@ package parser;
 
 import compilador.CodigosToken;
 import java.util.List;
+import java.util.Stack;
 import scanner.Token;
 import scanner.Tokenizer;
 import util.Erro;
-import util.Print;
+
 public class Parser {
-    Token token;
-    Tokenizer scanner;
+    private Token token;
+    private Tokenizer scanner;
+    private int escopo = -1;
+    private Stack<SimboloID> tabelaSimbolos = new Stack();
+    
     
     public Parser(Tokenizer scanner){
         this.scanner = scanner;
@@ -24,7 +28,6 @@ public class Parser {
             if(!scanner.eof()){
                 parserError(CodigosToken.EOF);
             }
-            
         }else parserError(First.programa);
     }
     
@@ -48,7 +51,7 @@ public class Parser {
 
     private void bloco() {
         //“{“ {<decl_var>}* {<comando>}* “}”
-        
+        escopo++;
         if(token.getCodigo() == CodigosToken.ABRE_CHAVES){
             scan();
             while(First.decl_var.contains(token.getCodigo())){
@@ -61,17 +64,21 @@ public class Parser {
                 scan();
             } else parserError(CodigosToken.FECHA_CHAVES);
         } else parserError(CodigosToken.ABRE_CHAVES);
+        limparSimbolos(escopo);
+        escopo--;
     }
     
     private void decl_var() {
         //<tipo> <id> {,<id>}* ";"
         
-        tipo();
+        String tipo = tipo();
         if(token.getCodigo() == CodigosToken.ID){
+            newID(token, escopo, tipo);
             scan();
             while(token.getCodigo() == CodigosToken.VIRGULA){
                 scan();
                 if(token.getCodigo() == CodigosToken.ID){
+                    newID(token, escopo, tipo);
                     scan();
                 } else parserError(CodigosToken.ID);
             }
@@ -81,10 +88,14 @@ public class Parser {
         }else parserError(CodigosToken.ID); 
     }
     
-    private void tipo(){
+    
+    private String tipo(){
+        String tipo = token.getLexema();
         if(First.tipo.contains(token.getCodigo())){
             scan();
+            return tipo;
         } else parserError(First.tipo);
+        return null;
     }    
 
     private void comando() {
@@ -163,10 +174,18 @@ public class Parser {
     
     private void expr_relacional(){
         //<expr_arit> <op_relacional> <expr_arit>
-        
-        expr_arit();
+        String tipo1, tipo2;
+        tipo1 = expr_arit();
         op_relacional();
-        expr_arit();
+        tipo2 = expr_arit();
+        
+        checarTipoExprRelacional(tipo1, tipo2);
+    }
+    
+    private void checarTipoExprRelacional(String tipo1, String tipo2){
+        if(!tipo1.equals(tipo2) && (tipo1.equals("char") || tipo2.equals("char"))){
+            semanticError(tipo1, tipo2, 3);
+        }
     }
     
     private void op_relacional(){
@@ -176,60 +195,99 @@ public class Parser {
         } else parserError(First.op_relacional);
     }
     
-    private void termo(){
-        fator();
+    private String termo(){
+        String tipo1, tipo2;
+        int op;
+        tipo1 = fator();
         while(token.getCodigo() == CodigosToken.MULTIPLICACAO || token.getCodigo() == CodigosToken.DIVISAO){
+            op = token.getCodigo();
             scan();
-            fator();
+            tipo2 = fator();
+            tipo1 = checarTipos(tipo1, tipo2, op);
         }
+        return tipo1;
     }
     
-    private void fator(){
+    private String checarTipos(String tipo1, String tipo2, int op){
+        if(tipo2 == null){
+            return tipo1;
+        }else if(tipo1.equals(tipo2) && tipo1.equals("char")){
+            return tipo1;
+        } else if(tipo1.equals("char") || tipo2.equals("char")){
+            semanticError(tipo1, tipo2, 3); //erro de char operando com outros tipos
+        }else if(op == CodigosToken.DIVISAO){
+            return "float";
+        } else if(tipo1.equals("float") || tipo2.equals("float")){
+            return "float";
+        }
+        return "int";
+    }
+    
+    private String fator(){
         //“(“ <expr_arit> “)”
         //<id>
         //<real>
         //<inteiro>
         //<char>
-
-        if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){
+        String tipo = null;
+        SimboloID tempSimbolo;
+        
+        if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){    
             scan();
-            expr_arit();
+            tipo = expr_arit();
             if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
                 scan();
             }else parserError(CodigosToken.FECHA_PARENTESES);
         } else if(token.getCodigo() == CodigosToken.ID){
-             scan();
+            
+            tempSimbolo = buscaSimbolo(token.getLexema(), -1);
+            if(tempSimbolo != null){
+                tipo = tempSimbolo.getTipo();
+            } else semanticError(token.getLexema(), null, 1); //variavel nao declarada
+            
+            scan();
         } else if(token.getCodigo() == CodigosToken.VALOR_REAL){
-             scan();
+            tipo = "float";
+            scan();
         } else if(token.getCodigo() == CodigosToken.VALOR_INTEIRO){
-             scan();
+            tipo = "int";
+            scan();
         } else if(token.getCodigo() == CodigosToken.VALOR_CHAR){
-             scan();
+            tipo = "char";
+            scan();
         }else parserError(First.fator);
+        
+        return tipo;
     }
     
-    private void expr_arit(){
+    private String expr_arit(){
         //<termo> <expr_arit2>
-        termo();
-        expr_arit2();
+        String tipo1, tipo2;
+        tipo1 = termo();
+        tipo2 = expr_arit2();
+        
+        return checarTipos(tipo1, tipo2, -1);
     }
     
-    private void expr_arit2(){
+    private String expr_arit2(){
         //"+" <termo> <expr_arit2>
         //"-" <termo> <expr_arit2>
         //λ
+        String tipo1, tipo2;
         
         if(token.getCodigo() == CodigosToken.SOMA){
             scan();
-            termo();
-            expr_arit2();
+            tipo1 = termo();
+            tipo2 = expr_arit2();
         } else if(token.getCodigo() == CodigosToken.SUBTRACAO){
             scan();
-            termo();
-            expr_arit2();
+            tipo1 = termo();
+            tipo2 = expr_arit2();
         } else{
             //λ
+            return null;
         }
+        return checarTipos(tipo1, tipo2, -1);
     }
     
 
@@ -246,17 +304,35 @@ public class Parser {
     
     private void atribuicao(){
         //<id> "=" <expr_arit> ";"
-        
+        String tipo1 = null, tipo2;
+        SimboloID tempSimbolo;
         if(token.getCodigo() == CodigosToken.ID){
+            
+            tempSimbolo = buscaSimbolo(token.getLexema(), -1);
+            if(tempSimbolo != null){
+                tipo1 = tempSimbolo.getTipo();
+            } else semanticError(token.getLexema(), null, 1); //variavel nao declarada
+            
             scan();
             if(token.getCodigo() == CodigosToken.ATRIBUICAO){
                 scan();
-                expr_arit();
+                tipo2 = expr_arit();
+                
+                checarTipoAtribuicao(tipo1, tipo2);
+                
                 if(token.getCodigo() == CodigosToken.PONTO_VIRGULA){
                     scan();
                 } else parserError(CodigosToken.PONTO_VIRGULA);
             } else parserError(CodigosToken.ATRIBUICAO);
         } else parserError(CodigosToken.ID);
+    }
+    
+    private void checarTipoAtribuicao(String tipo1, String tipo2){
+        if(!tipo1.equals(tipo2)){
+            if(!(tipo1.equals("float") && tipo2.equals("int"))){
+                semanticError(tipo1, tipo2, 2);
+            }
+        }
     }
 
     private void scan() {
@@ -269,6 +345,70 @@ public class Parser {
     }
     private void parserError(List<Integer> codigoToken) {
         Erro.sintaxError(codigoToken, scanner.getUltimoTokenValido(), scanner.eof(), scanner.getCursor());
+    }
+    private void semanticError(String lexema1, String lexema2, int codErro) {
+        Erro.semanticError(lexema1, lexema2, codErro, scanner.getUltimoTokenValido(), scanner.getCursor());
+    }
+
+
+    private void newID(Token token, int escopo, String tipo) {
+        SimboloID novo = new SimboloID(token, escopo, tipo);
+        
+        if(buscaSimbolo(novo.getLexema(), novo.getEscopo()) == null){
+            tabelaSimbolos.push(novo);
+        }else semanticError(novo.getLexema(), null, 0);
+    }
+
+    private SimboloID buscaSimbolo(String lexema, int escopo) {
+        SimboloID temp;
+        for(int i = tabelaSimbolos.size() - 1; i >= 0; i--){
+            temp = tabelaSimbolos.get(i);
+            if(temp.getLexema().equals(lexema)){
+                if(escopo == -1){
+                    return temp;
+                } else if(temp.getEscopo() == escopo){
+                    return temp;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private void limparSimbolos(int escopoAtual){
+        SimboloID temp;
+        if(!tabelaSimbolos.isEmpty()){
+            do{
+                temp = tabelaSimbolos.peek();
+                if(temp.getEscopo() == escopoAtual){
+                    tabelaSimbolos.pop();
+                }
+            }while(!tabelaSimbolos.isEmpty() && temp.getEscopo() == escopoAtual);
+        }
+    }
+
+    private static class SimboloID {
+        private String tipo;
+        private String lexema;
+        private int escopo;
+        
+        public SimboloID(Token token, int escopo, String tipo) {
+            this.escopo = escopo;
+            lexema = token.getLexema();
+            this.tipo = tipo;
+        }
+
+        public int getEscopo() {
+            return escopo;
+        }
+
+        public String getLexema() {
+            return lexema;
+        }
+
+        public String getTipo() {
+            return tipo;
+        }
+        
     }
 
 }

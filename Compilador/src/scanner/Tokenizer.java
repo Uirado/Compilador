@@ -206,6 +206,9 @@ public class Tokenizer {
                         getNextChar();
                         break;
                     }
+                    if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
+                        cursor.addLinha();
+                    }
                 }else if(ch.charAt(0) == '\n' && leitor.hasNextLine()){
                     cursor.addLinha();
                 }
@@ -223,23 +226,23 @@ public class Tokenizer {
         if(codErro > 0){
             switch (codErro){
                 case 1:
-                    Erro.tokenError(cursor, ultimoTokenValido, "Caractere inválido: \"" + ch + "\"");
+                    Erro.tokenError(cursor, ultimoTokenValido, "Caractere invalido: \"" + ch + "\"");
                     getNextChar();
                     break;
                 case 2:
-                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação do operador relacional DIFERENTE. Caractere \"!\" sozinho");
+                    Erro.tokenError(cursor, ultimoTokenValido, "Ma formacao do operador relacional DIFERENTE. Caractere \"!\" sozinho");
                     break;
                 case 3:
-                    Erro.tokenError(cursor, ultimoTokenValido, "EOF dentro de comentário");
+                    Erro.tokenError(cursor, ultimoTokenValido, "EOF dentro de comentario");
                     break;
                 case 4:
-                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação de FLOAT \""+lexema+"\"");
+                    Erro.tokenError(cursor, ultimoTokenValido, "Ma formacao de FLOAT \""+lexema+"\"");
                     break;
                 case 5:
-                    Erro.tokenError(cursor, ultimoTokenValido, "Má formação de CHAR \""+lexema+"\"");
+                    Erro.tokenError(cursor, ultimoTokenValido, "Ma formacao de CHAR \""+lexema+"\"");
                     break;
                 case 6:
-                    Erro.tokenError(cursor, ultimoTokenValido, "Token não encontrado na tabela de símbolos \""+lexema+"\"");
+                    Erro.tokenError(cursor, ultimoTokenValido, "Token nao reconhecido \""+lexema+"\"");
                     break;
                 default:
                     //NENHUM ERRO

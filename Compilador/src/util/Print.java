@@ -4,9 +4,11 @@ import compilador.CodigosToken;
 import scanner.Token;
 
 public class Print {
-    public static void show(String texto){
-        System.out.println(texto);
+    public static void show(String texto, boolean quebraLinha){
+        if(quebraLinha) System.out.println(texto);
+        else System.out.print(texto);
     }
+    
     
     public static void show(char caractere, boolean quebraLinha){
         if(!quebraLinha) System.out.println(caractere);
@@ -24,11 +26,11 @@ public class Print {
         }
         
         if(codigo < 0){
-            Print.show(strCodigo + " " + CodigosToken.getNome(codigo));
+            Print.show(strCodigo + " " + CodigosToken.getNome(codigo), true);
         } else if(codigo < 50){
-            Print.show(strCodigo + " \"" + lexema + "\"");
+            Print.show(strCodigo + " \"" + lexema + "\"", true);
         } else{
-            Print.show(strCodigo + " " + CodigosToken.getNome(codigo) + " \"" + lexema + "\"");
+            Print.show(strCodigo + " " + CodigosToken.getNome(codigo) + " \"" + lexema + "\"", true);
         }
         
     }

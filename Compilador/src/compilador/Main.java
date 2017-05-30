@@ -1,7 +1,6 @@
 package compilador;
 
 import util.Erro;
-import util.Print;
 import scanner.Tokenizer;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import parser.Parser;
-import scanner.Token;
 
 public class Main {
     

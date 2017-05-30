@@ -135,7 +135,7 @@ public class CodigosToken {
     
     public static String getLexema(int codigo){
         if(codigo > -1 && codigo < 50){
-            return "\"" + TABELA.get(codigo) + "\"";
+            return TABELA.get(codigo);
         } else return getNome(codigo);
     }
 }

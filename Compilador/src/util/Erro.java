@@ -14,22 +14,22 @@ public class Erro {
     };
     
     public static void show(int codigo){
-        Print.show(MENSAGENS[codigo]);
+        Print.show(MENSAGENS[codigo], true);
     }
     
     public static void tokenError(Cursor cursor, Token tok, String detalhes){
         String lex;
         
         if(tok == null){
-            Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido (nenhum): "+ detalhes);
+            Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido (nenhum): "+ detalhes, true);
             
         } else{
             lex = CodigosToken.getLexema(tok.getCodigo());
             
             if(tok.getCodigo() >= 50){ 
-                Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido "+ lex + " \"" + tok.getLexema() + "\": " + detalhes);
+                Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido "+ lex + " \"" + tok.getLexema() + "\": " + detalhes, true);
             } else{
-                Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido "+ lex +": "+ detalhes);
+                Print.show("ERRO na linha " + cursor.getLinha() + ", coluna " + cursor.getColuna() + ", ultimo token lido "+ lex +": "+ detalhes, true);
             }
         }
         System.exit(0);

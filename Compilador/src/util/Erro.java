@@ -57,13 +57,15 @@ public class Erro {
         tokenError(cursor, token, msg1 + msg2);
     }
 
-    public static void semanticError(String lexema1, String lexema2, int codErro, Token token, Cursor cursor) {
-        String msg;
+    public static void semanticError(int tipo1, int tipo2, int codErro, Token token, Cursor cursor) {
+        String msg, lex1, lex2;
+        lex1 = CodigosToken.getLexema(tipo1);
+        lex2 = CodigosToken.getLexema(tipo2);
         switch(codErro){
-            case 0: msg = "Identificador \"" + lexema1 + "\" repetido no mesmo escopo."; break;
-            case 1: msg = "Variavel \"" + lexema1 + "\" nao declarada."; break;
-            case 2: msg = "Atribuicao de tipos incompativeis: \""+ lexema1 + "\" <- \"" + lexema2 + "\"."; break;
-            case 3: msg = "Tipo \"char\" nao pode ser operado com outros tipos: \""+ lexema1 + "\" <> \"" + lexema2 + "\"."; break;
+            case 0: msg = "Identificador \"" + token.getLexema() + "\" repetido no mesmo escopo."; break;
+            case 1: msg = "Variavel \"" + token.getLexema() + "\" nao declarada."; break;
+            case 2: msg = "Atribuicao de tipos incompativeis. Encontrado "+ lex1 + " <- " + lex2 + "."; break;
+            case 3: msg = "Tipo \"char\" nao opera com outros tipos. Encontrado "+ lex1 + " <-> " + lex2 + "."; break;
             default: msg = ""; break;
         }
         

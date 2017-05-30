@@ -48,7 +48,7 @@ public class Parser {
             } else parserError(CodigosToken.MAIN);
         } else parserError(CodigosToken.INT);
     }
-
+    
     private void bloco() {
         //“{“ {<decl_var>}* {<comando>}* “}”
         escopo++;
@@ -71,14 +71,14 @@ public class Parser {
     private void decl_var() {
         //<tipo> <id> {,<id>}* ";"
         
-        String tipo = tipo();
+        int tipo = tipo();
         if(token.getCodigo() == CodigosToken.ID){
-            newID(token, escopo, tipo);
+            novoSimbolo(token, escopo, tipo);
             scan();
             while(token.getCodigo() == CodigosToken.VIRGULA){
                 scan();
                 if(token.getCodigo() == CodigosToken.ID){
-                    newID(token, escopo, tipo);
+                    novoSimbolo(token, escopo, tipo);
                     scan();
                 } else parserError(CodigosToken.ID);
             }
@@ -89,13 +89,13 @@ public class Parser {
     }
     
     
-    private String tipo(){
-        String tipo = token.getLexema();
+    private int tipo(){
+        int tipo = token.getCodigo();
         if(First.tipo.contains(token.getCodigo())){
             scan();
             return tipo;
         } else parserError(First.tipo);
-        return null;
+        return -10;
     }    
 
     private void comando() {
@@ -174,7 +174,7 @@ public class Parser {
     
     private void expr_relacional(){
         //<expr_arit> <op_relacional> <expr_arit>
-        String tipo1, tipo2;
+        int tipo1, tipo2;
         tipo1 = expr_arit();
         op_relacional();
         tipo2 = expr_arit();
@@ -182,8 +182,8 @@ public class Parser {
         checarTipoExprRelacional(tipo1, tipo2);
     }
     
-    private void checarTipoExprRelacional(String tipo1, String tipo2){
-        if(!tipo1.equals(tipo2) && (tipo1.equals("char") || tipo2.equals("char"))){
+    private void checarTipoExprRelacional(int tipo1, int tipo2){
+        if(tipo1 != tipo2 && (tipo1 == CodigosToken.CHAR || tipo2 == CodigosToken.CHAR)){
             semanticError(tipo1, tipo2, 3);
         }
     }
@@ -195,8 +195,8 @@ public class Parser {
         } else parserError(First.op_relacional);
     }
     
-    private String termo(){
-        String tipo1, tipo2;
+    private int termo(){
+        int tipo1 = -10, tipo2 = -10;
         int op;
         tipo1 = fator();
         while(token.getCodigo() == CodigosToken.MULTIPLICACAO || token.getCodigo() == CodigosToken.DIVISAO){
@@ -208,28 +208,28 @@ public class Parser {
         return tipo1;
     }
     
-    private String checarTipos(String tipo1, String tipo2, int op){
-        if(tipo2 == null){
+    private int checarTipos(int tipo1, int tipo2, int op){
+        if(tipo2 == -10){
             return tipo1;
-        }else if(tipo1.equals(tipo2) && tipo1.equals("char")){
+        }else if(tipo1 == tipo2 && tipo1 == CodigosToken.CHAR){
             return tipo1;
-        } else if(tipo1.equals("char") || tipo2.equals("char")){
+        } else if(tipo1 == CodigosToken.CHAR || tipo2 == CodigosToken.CHAR){
             semanticError(tipo1, tipo2, 3); //erro de char operando com outros tipos
         }else if(op == CodigosToken.DIVISAO){
-            return "float";
-        } else if(tipo1.equals("float") || tipo2.equals("float")){
-            return "float";
+            return CodigosToken.FLOAT;
+        } else if(tipo1 == CodigosToken.FLOAT || tipo2 == CodigosToken.FLOAT){
+            return CodigosToken.FLOAT;
         }
-        return "int";
+        return CodigosToken.INT;
     }
     
-    private String fator(){
+    private int fator(){
         //“(“ <expr_arit> “)”
         //<id>
         //<real>
         //<inteiro>
         //<char>
-        String tipo = null;
+        int tipo = -10;
         SimboloID tempSimbolo;
         
         if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){    
@@ -243,37 +243,37 @@ public class Parser {
             tempSimbolo = buscaSimbolo(token.getLexema(), -1);
             if(tempSimbolo != null){
                 tipo = tempSimbolo.getTipo();
-            } else semanticError(token.getLexema(), null, 1); //variavel nao declarada
+            } else semanticError(token.getCodigo(), -10, 1); //variavel nao declarada
+            scan();
             
-            scan();
         } else if(token.getCodigo() == CodigosToken.VALOR_REAL){
-            tipo = "float";
+            tipo = CodigosToken.FLOAT;
             scan();
-        } else if(token.getCodigo() == CodigosToken.VALOR_INTEIRO){
-            tipo = "int";
+        }else if(token.getCodigo() == CodigosToken.VALOR_INTEIRO){
+            tipo = CodigosToken.INT;
             scan();
-        } else if(token.getCodigo() == CodigosToken.VALOR_CHAR){
-            tipo = "char";
+        }else if(token.getCodigo() == CodigosToken.VALOR_CHAR){
+            tipo = CodigosToken.CHAR;
             scan();
         }else parserError(First.fator);
         
         return tipo;
     }
     
-    private String expr_arit(){
+    private int expr_arit(){
         //<termo> <expr_arit2>
-        String tipo1, tipo2;
+        int tipo1, tipo2;
         tipo1 = termo();
         tipo2 = expr_arit2();
         
         return checarTipos(tipo1, tipo2, -1);
     }
     
-    private String expr_arit2(){
+    private int expr_arit2(){
         //"+" <termo> <expr_arit2>
         //"-" <termo> <expr_arit2>
         //λ
-        String tipo1, tipo2;
+        int tipo1 = -10, tipo2 = -10;
         
         if(token.getCodigo() == CodigosToken.SOMA){
             scan();
@@ -285,7 +285,7 @@ public class Parser {
             tipo2 = expr_arit2();
         } else{
             //λ
-            return null;
+            return -10;
         }
         return checarTipos(tipo1, tipo2, -1);
     }
@@ -304,14 +304,14 @@ public class Parser {
     
     private void atribuicao(){
         //<id> "=" <expr_arit> ";"
-        String tipo1 = null, tipo2;
+        int tipo1 = -10, tipo2;
         SimboloID tempSimbolo;
         if(token.getCodigo() == CodigosToken.ID){
             
             tempSimbolo = buscaSimbolo(token.getLexema(), -1);
             if(tempSimbolo != null){
                 tipo1 = tempSimbolo.getTipo();
-            } else semanticError(token.getLexema(), null, 1); //variavel nao declarada
+            } else semanticError(token.getCodigo(), -10, 1); //variavel nao declarada
             
             scan();
             if(token.getCodigo() == CodigosToken.ATRIBUICAO){
@@ -327,9 +327,9 @@ public class Parser {
         } else parserError(CodigosToken.ID);
     }
     
-    private void checarTipoAtribuicao(String tipo1, String tipo2){
-        if(!tipo1.equals(tipo2)){
-            if(!(tipo1.equals("float") && tipo2.equals("int"))){
+    private void checarTipoAtribuicao(int tipo1, int tipo2){
+        if(tipo1 != tipo2){
+            if(!(tipo1 == CodigosToken.FLOAT && tipo2 == CodigosToken.INT)){
                 semanticError(tipo1, tipo2, 2);
             }
         }
@@ -346,17 +346,16 @@ public class Parser {
     private void parserError(List<Integer> codigoToken) {
         Erro.sintaxError(codigoToken, scanner.getUltimoTokenValido(), scanner.eof(), scanner.getCursor());
     }
-    private void semanticError(String lexema1, String lexema2, int codErro) {
-        Erro.semanticError(lexema1, lexema2, codErro, scanner.getUltimoTokenValido(), scanner.getCursor());
+    private void semanticError(int tipo1, int tipo2, int codErro) {
+        Erro.semanticError(tipo1, tipo2, codErro, scanner.getUltimoTokenValido(), scanner.getCursor());
     }
 
-
-    private void newID(Token token, int escopo, String tipo) {
+    private void novoSimbolo(Token token, int escopo, int tipo) {
         SimboloID novo = new SimboloID(token, escopo, tipo);
         
         if(buscaSimbolo(novo.getLexema(), novo.getEscopo()) == null){
             tabelaSimbolos.push(novo);
-        }else semanticError(novo.getLexema(), null, 0);
+        }else semanticError(novo.getTipo(), -10, 0);
     }
 
     private SimboloID buscaSimbolo(String lexema, int escopo) {
@@ -387,11 +386,13 @@ public class Parser {
     }
 
     private static class SimboloID {
-        private String tipo;
+        //tipos possiveis: int:6 / float:7 / char:8
+        
+        private int tipo;
         private String lexema;
         private int escopo;
         
-        public SimboloID(Token token, int escopo, String tipo) {
+        public SimboloID(Token token, int escopo, int tipo) {
             this.escopo = escopo;
             lexema = token.getLexema();
             this.tipo = tipo;
@@ -405,7 +406,7 @@ public class Parser {
             return lexema;
         }
 
-        public String getTipo() {
+        public int getTipo() {
             return tipo;
         }
         

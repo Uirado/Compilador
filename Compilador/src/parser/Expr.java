@@ -17,6 +17,9 @@ public class Expr {
     private int op;
     private String lex;
     
+    public Expr(String lex){
+        this.lex = lex;
+    }
     public Expr(int tipo){
         this.tipo = tipo;
     }

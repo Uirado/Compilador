@@ -116,22 +116,25 @@ public class Parser {
     
     private void _if(){
         // if "("<expr_relacional>")" <comando> {else <comando>}?
-        
+        String exprRel;
+        String labelEndIf = newLabel();
         if(token.getCodigo() == CodigosToken.IF){
             scan();
             if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){
                 scan();
-                expr_relacional();
+                exprRel = expr_relacional();
                 if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
+                    Gerador.genIf(exprRel, labelEndIf, CodigosToken.IGUAL);
                     scan();
                     comando();
-                    
                     //else opcional
                     if(token.getCodigo() == CodigosToken.ELSE){
+                        Gerador.genGoto(labelEndIf);
                         scan();
                         comando();
+                        
                     }
-                    
+                    Gerador.genLabel(labelEndIf);
                 }else parserError(CodigosToken.FECHA_PARENTESES);
             }else parserError(CodigosToken.ABRE_PARENTESES);
         } else parserError(First._if);
@@ -155,30 +158,40 @@ public class Parser {
         String labelInicio, labelFim, exprRel;
         labelInicio = newLabel();
         labelFim = newLabel();
-        
-        Print.show(labelInicio, true);
+ 
         scan();
         if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){
-            
+            Gerador.genLabel(labelInicio);
             scan();
-            expr_relacional();
+            exprRel = expr_relacional();
+            Gerador.genIf(exprRel, labelFim, CodigosToken.IGUAL);
             
             if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
                 scan();
                 comando();
             } else parserError(CodigosToken.FECHA_PARENTESES);
+            
+            Gerador.genGoto(labelInicio);
+            Gerador.genLabel(labelFim);
+            
         } else parserError(CodigosToken.ABRE_PARENTESES);
     }
     
     private void _do(){
         //do
+        
+        String labelInicio, exprRel;
+        labelInicio = newLabel();
+        
+        Gerador.genLabel(labelInicio);
         scan();
         comando();
         if(token.getCodigo() == CodigosToken.WHILE){
             scan();
             if(token.getCodigo() == CodigosToken.ABRE_PARENTESES){
                 scan();
-                expr_relacional();
+                exprRel = expr_relacional();
+                Gerador.genIf(exprRel, labelInicio, CodigosToken.DIFERENTE);
                 if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
                     scan();
                     if(token.getCodigo() == CodigosToken.PONTO_VIRGULA){
@@ -189,16 +202,21 @@ public class Parser {
         }else parserError(CodigosToken.WHILE);
     }
     
-    private Expr expr_relacional(){
+    private String expr_relacional(){
         //<expr_arit> <op_relacional> <expr_arit>
-        Expr expr1, expr2;
+        int op;
+        Expr T, expr1, expr2;
+        
         expr1 = expr_arit();
-        op_relacional();
+        op = op_relacional();
         expr2 = expr_arit();
         
         checarTipoExprRelacional(expr1.getTipo(), expr2.getTipo());
         
-        return expr1;
+        T = new Expr(newT());
+        Gerador.gen(T, expr1, expr2, op);
+        
+        return T.getLex();
     }
     
     private void checarTipoExprRelacional(int tipo1, int tipo2){
@@ -207,11 +225,14 @@ public class Parser {
         }
     }
     
-    private void op_relacional(){
+    private int op_relacional(){
         // "==" | "!=" | "<" | ">" | "<=" | ">="
+        int op = -10;
         if(First.op_relacional.contains(token.getCodigo())){
+            op = token.getCodigo();
             scan();
         } else parserError(First.op_relacional);
+        return op;
     }
     
     private Expr termo(){
@@ -281,9 +302,10 @@ public class Parser {
             if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
                 scan();
             }else parserError(CodigosToken.FECHA_PARENTESES);
-            
+            return expr;
         } else{
             lex = token.getLexema();
+            expr = new Expr(lex);
             if(token.getCodigo() == CodigosToken.ID){
 
                 tempSimbolo = buscaSimbolo(token.getLexema(), -1);
@@ -304,7 +326,7 @@ public class Parser {
             }else parserError(First.fator);
         }
         
-        expr = new Expr(tipo, lex);
+        expr.setTipo(tipo);
         return expr;
     }
     

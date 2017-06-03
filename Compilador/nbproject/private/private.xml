@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/uira/Documentos/GIT/Compilador/Compilador/src/parser/Parser.java</file>
-            <file>file:/home/uira/Documentos/GIT/Compilador/Compilador/src/parser/Gerador.java</file>
-            <file>file:/home/uira/Documentos/GIT/Compilador/Compilador/src/parser/Expr.java</file>
+            <file>file:/home/cais/Documentos/GIT/Compilador/Compilador/src/scanner/Tokenizer.java</file>
+            <file>file:/home/cais/Documentos/GIT/Compilador/Compilador/src/scanner/Cursor.java</file>
+            <file>file:/home/cais/Documentos/GIT/Compilador/Compilador/src/parser/Parser.java</file>
+            <file>file:/home/cais/Documentos/GIT/Compilador/Compilador/src/util/Erro.java</file>
         </group>
     </open-files>
 </project-private>

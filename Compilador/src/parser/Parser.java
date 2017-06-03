@@ -117,6 +117,7 @@ public class Parser {
     private void _if(){
         // if "("<expr_relacional>")" <comando> {else <comando>}?
         String exprRel;
+        String labelElse = newLabel();
         String labelEndIf = newLabel();
         if(token.getCodigo() == CodigosToken.IF){
             scan();
@@ -124,15 +125,16 @@ public class Parser {
                 scan();
                 exprRel = expr_relacional();
                 if(token.getCodigo() == CodigosToken.FECHA_PARENTESES){
-                    Gerador.genIf(exprRel, labelEndIf, CodigosToken.IGUAL);
+                    Gerador.genIf(exprRel, labelElse, CodigosToken.IGUAL);
                     scan();
                     comando();
+                    
                     //else opcional
                     if(token.getCodigo() == CodigosToken.ELSE){
                         Gerador.genGoto(labelEndIf);
+                        Gerador.genLabel(labelElse);
                         scan();
                         comando();
-                        
                     }
                     Gerador.genLabel(labelEndIf);
                 }else parserError(CodigosToken.FECHA_PARENTESES);

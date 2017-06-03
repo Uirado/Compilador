@@ -1,28 +1,11 @@
-/* Arquivo Teste*/
-
 int main(){
 
-int a, b, c,t;
-float f, d, r,p,u,n,l,o;
-
-
-do{
-
-p = a-b;
-
-}while(a<(b*u+(d-a+u)*n+p-c));
-
-
-if(a>b)
-	if(a<p-l+t*3/(3+5)-34)
-		if(b+o-(a*n/o) >= b)
-			b = t+1;
-		else
-			b = t-1;
-
-while(8 != 9+2-18/(d*n/a)){
-/*Teste para Compilador*/
-	if(o<b)
-		p = p*(p+d-c+2)+(o-a*3);
-}
+    int a, x;
+    float b;
+    do{
+        if(x-1 > 0) 
+            a = 0;
+        else
+            b = x*8;
+    }while(x <= b + a /2);
 }

@@ -58,7 +58,6 @@ public class Gerador {
         codigo.append(OP);
         codigo.append(" 0 goto ");
         codigo.append(labelEndIf);
-        codigo.append(':');
         
         Print.show(codigo.toString(), true);
     }
@@ -76,7 +75,6 @@ public class Gerador {
         codigo.append(TAB);
         codigo.append("goto ");
         codigo.append(label);
-        codigo.append(':');
         
         Print.show(codigo.toString(), true);
     }

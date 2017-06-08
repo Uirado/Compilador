@@ -135,8 +135,10 @@ public class Parser {
                         Gerador.genLabel(labelElse);
                         scan();
                         comando();
+                        Gerador.genLabel(labelEndIf);
+                    } else{
+                        Gerador.genLabel(labelElse);
                     }
-                    Gerador.genLabel(labelEndIf);
                 }else parserError(CodigosToken.FECHA_PARENTESES);
             }else parserError(CodigosToken.ABRE_PARENTESES);
         } else parserError(First._if);
@@ -214,6 +216,13 @@ public class Parser {
         expr2 = expr_arit();
         
         checarTipoExprRelacional(expr1.getTipo(), expr2.getTipo());
+        
+        //coercao de tipos
+        if(expr1.getTipo() == CodigosToken.INT && expr2.getTipo() == CodigosToken.FLOAT){
+            expr1.setLex("(float) " + expr1.getLex());
+        } else if(expr1.getTipo() == CodigosToken.FLOAT && expr2.getTipo() == CodigosToken.INT){
+            expr2.setLex("(float) " + expr2.getLex());
+        }
         
         T = new Expr(newT());
         Gerador.gen(T, expr1, expr2, op);
